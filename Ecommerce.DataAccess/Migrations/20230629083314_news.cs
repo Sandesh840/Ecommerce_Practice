@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Ecommerce_test.Migrations
+namespace Ecommerce.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class news : Migration

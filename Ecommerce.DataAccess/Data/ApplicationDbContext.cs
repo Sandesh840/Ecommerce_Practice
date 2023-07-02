@@ -1,7 +1,7 @@
-﻿using Ecommerce_test.Models;
+﻿using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce_test.Data
+namespace Ecommerce.DataAccess.Data
 {
     public class ApplicationDbContext:DbContext
     {

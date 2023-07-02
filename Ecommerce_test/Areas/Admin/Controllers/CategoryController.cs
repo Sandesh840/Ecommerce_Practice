@@ -1,19 +1,21 @@
-﻿using Ecommerce_test.Data;
-using Ecommerce_test.Models;
+﻿using Ecommerce.DataAccess.Data;
+using Ecommerce.DataAccess.Repository.IRepository;
+using Ecommerce.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce_test.Controllers
+namespace Ecommerce_test.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _applicationDbContext;
-        public CategoryController(ApplicationDbContext applicationDbContext)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _applicationDbContext = applicationDbContext;      
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            List<Category> objCategory=_applicationDbContext.Category.ToList();
+            List<Category> objCategory = _unitOfWork.Category.GetAll().ToList();
             return View(objCategory);
         }
         public IActionResult Create()
@@ -34,19 +36,22 @@ namespace Ecommerce_test.Controllers
             }*/
             if (ModelState.IsValid)
             {
-                _applicationDbContext.Category.Add(obj);
-                _applicationDbContext.SaveChanges();
+                _unitOfWork.Category.Add(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             return View();
         }
+
+        //get detail by id
         public IActionResult Edit(int? id)
         {
-            if(id==null || id == 0){
+            if (id == null || id == 0)
+            {
                 return NotFound();
             }
-            Category category = _applicationDbContext.Category.Find(id);
+            Category category = _unitOfWork.Category.Get(u => u.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -60,24 +65,24 @@ namespace Ecommerce_test.Controllers
             {
                 ModelState.AddModelError("name", "The Display Order can not be same as Category name");
             }
-           
+
             if (ModelState.IsValid)
             {
-                _applicationDbContext.Category.Update(obj);
-                _applicationDbContext.SaveChanges();
+                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
             return View();
         }
-
+        // delete page
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category category = _applicationDbContext.Category.Find(id);
+            Category category = _unitOfWork.Category.Get(u => u.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -87,13 +92,13 @@ namespace Ecommerce_test.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int id)
         {
-            Category category = _applicationDbContext.Category.Find(id);
+            Category category = _unitOfWork.Category.Get(u => u.Id == id);
             if (category == null)
             {
-                return NotFound() ;
+                return NotFound();
             }
-            _applicationDbContext.Category.Remove(category); 
-            _applicationDbContext.SaveChanges();
+            _unitOfWork.Category.Remove(category);
+            _unitOfWork.Save();
             TempData["success"] = "Category delete successfully";
             return RedirectToAction("Index");
         }
