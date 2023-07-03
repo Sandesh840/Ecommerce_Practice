@@ -12,12 +12,14 @@ namespace Ecommerce.DataAccess.Repository
     {
         private readonly ApplicationDbContext _applicationDbContext;
         public ICategoryRepository Category { get; private set; }
-        public UnitOfWork(ApplicationDbContext applicationDbContext)  
+        public IProductRepository Product { get; private set; }
+        public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
-            Category=new CategoryRepository(_applicationDbContext);
+            Category = new CategoryRepository(_applicationDbContext);
+            Product = new ProductRepository(_applicationDbContext);
         }
-       
+
 
         public void Save()
         {

@@ -10,20 +10,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.DataAccess.Repository
 {
-    public  class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _applicationDbContext;
         internal DbSet<T> dbSet;
         public Repository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
-            this.dbSet=_applicationDbContext.Set<T>();  
+            this.dbSet = _applicationDbContext.Set<T>();
             // _applicationDbContext.Category==dbSet
         }
         public T Get(Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = dbSet;
-            query=query.Where(filter);
+            query = query.Where(filter);
             return query.FirstOrDefault();
         }
 
