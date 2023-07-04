@@ -54,7 +54,7 @@ namespace Ecommerce_test.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+        public IActionResult Upserts(ProductVM productVM, IFormFile? files)
         {           
             /*if (obj.Name!=null &&  obj.Name.ToLower() == "test")
             {
@@ -63,17 +63,34 @@ namespace Ecommerce_test.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if(file!=null)
+                if(files!=null)
                 {
-                    string fileName=Guid.NewGuid().ToString()+Path.GetExtension(file.FileName);
+                    string fileName=Guid.NewGuid().ToString()+Path.GetExtension(files.FileName);
                     string productPath=Path.Combine(wwwRootPath, @"images\product");
+                    if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    {
+                        //delete oldImage 
+                        var oldImagePath=Path.Combine(wwwRootPath,productVM.Product.ImageUrl.TrimStart('\\'));
+                        if(System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
                     using(var fileStream=new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        files.CopyTo(fileStream);
                     }
                     productVM.Product.ImageUrl = @"\images\product\" + fileName;
+                }  
+                if(productVM.Product.Id==0)
+                {
+                    _unitOfWork.Product.Add(productVM.Product);
                 }
-                _unitOfWork.Product.Add(productVM.Product);
+                else
+                {
+                    _unitOfWork.Product.Update(productVM.Product);
+                }
+                
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index");
