@@ -66,10 +66,12 @@
                             <span asp-validation-for="Product.CategoryId" class="text-danger"></span>                           
                             
                             <div class="form-floating py-2 col-12">
-                            <input type="file" name="file" class="form-control border-0 shadow"  />                            
-                            <label class="ms-2">Image</label>
+                                <input type="file" name="file" onchange="previewImage(event)" class="form-control border-0 shadow" accept=".jpeg, .jpg, .png" />
+                                <label class="ms-2">Image</label>
                             </div>
-                            
+                            <div class="form-group">
+                                <img id="imagePreview" src="#" alt="Image Preview" style="display: none; max-width: 200px; max-height: 200px;">
+                            </div>
                            
 
                         </div>
@@ -115,6 +117,28 @@
                 { value: 'Email', title: 'Email' },
             ]
         });
+
+
+        function previewImage(event) {
+            // this will catch the input with reference to the event
+            var input = event.target;
+            //this will get imgage preview img  type so that we can maoe URL to img src
+            var preview = document.getElementById('imagePreview');
+            //if input has file then only it will go through the condition
+            if (input.files && input.files[0]) {
+                //this is used to read the file and get its detail. It just a library class
+                var reader = new FileReader();
+                // when an event is triggered and the reader will
+                reader.onload = function (e) {
+                    //passing the event data to the img src with the id="imagePreview"
+                    preview.src = e.target.result;
+                    //setting the style of img to block so that image will load with proper size
+                    preview.style.display = 'block';
+                }
+                //this will read the file and generate the url. Its just a function of the FileReader calssand it will read the fiole as binary string
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
     @{
         <partial name="_ValidationScriptsPartial" />
