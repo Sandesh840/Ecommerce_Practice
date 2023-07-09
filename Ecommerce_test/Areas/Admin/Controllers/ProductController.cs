@@ -19,7 +19,7 @@ namespace Ecommerce_test.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> objproduct = _unitOfWork.Product.GetAll().ToList();            
+            List<Product> objproduct = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();            
             return View(objproduct);
         }
 
@@ -55,16 +55,35 @@ namespace Ecommerce_test.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");                   
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+                    if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    {
+                        //delete oldImage 
+                        var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
                     using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
                     productVM.Product.ImageUrl = @"\images\product\" + fileName;
                 }
-                _unitOfWork.Product.Add(productVM.Product);
+                if (productVM.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productVM.Product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(productVM.Product);
+                }
                 _unitOfWork.Save();
-                TempData["success"] = "Product created successfully";
+                if (productVM.Product.Id == 0)
+                {TempData["success"] = "Product created successfully";}
+                else
+                {TempData["success"] = "Product updated successfully";}               
                 return RedirectToAction("Index");
             }
 
@@ -78,69 +97,34 @@ namespace Ecommerce_test.Areas.Admin.Controllers
             }
             return View(productVM);
         }
+        
 
-
-        /*  public IActionResult Upserts(ProductVM productVM, IFormFile? files)
-          {                   
-              if (ModelState.IsValid)
-              {
-                  string wwwRootPath = _webHostEnvironment.WebRootPath;
-                  if(files!=null)
-                  {
-                      string fileName=Guid.NewGuid().ToString()+Path.GetExtension(files.FileName);
-                      string productPath=Path.Combine(wwwRootPath, @"images\product");
-                      if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
-                      {
-                          //delete oldImage 
-                          var oldImagePath=Path.Combine(wwwRootPath,productVM.Product.ImageUrl.TrimStart('\\'));
-                          if(System.IO.File.Exists(oldImagePath))
-                          {
-                              System.IO.File.Delete(oldImagePath);
-                          }
-                      }
-                      using(var fileStream=new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-                      {
-                          files.CopyTo(fileStream);
-                      }
-                      productVM.Product.ImageUrl = @"\images\product\" + fileName;
-                  }  
-                  if(productVM.Product.Id==0)
-                  {
-                      _unitOfWork.Product.Add(productVM.Product);
-                  }
-                  else
-                  {
-                      _unitOfWork.Product.Update(productVM.Product);
-                  }
-
-                  _unitOfWork.Save();
-                  TempData["success"] = "Product created successfully";
-                  return RedirectToAction("Index");
-              }
-              else
-              {
-                  productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
-                      {
-                          Text = u.Name,
-                          Value = u.Id.ToString()                                     
-                  });
-              }
-              return View(productVM);
-          }  */
-
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int id)
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            Product product = _unitOfWork.Product.Get(u => u.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Product.Remove(product);
-            _unitOfWork.Save();
-            TempData["success"] = "Product delete successfully";
-            return RedirectToAction("Index");
+            List<Product> objproduct = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = objproduct });
         }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
+            if (productToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "errpr while deleting" });
+            }
+            var oldImgPath = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImgPath))
+            {
+                System.IO.File.Delete(oldImgPath);
+            }
+
+            _unitOfWork.Product.Remove(productToBeDeleted);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Successfully deleting" });
+        }
+        #endregion
     }
 }
