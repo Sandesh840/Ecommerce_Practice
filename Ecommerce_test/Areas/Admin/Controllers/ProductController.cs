@@ -47,67 +47,76 @@ namespace Ecommerce_test.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upserts(ProductVM productVM, IFormFile? files)
-        {                   
+        public IActionResult Upserts(ProductVM productVM)
+        {
             if (ModelState.IsValid)
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if(files!=null)
-                {
-                    string fileName=Guid.NewGuid().ToString()+Path.GetExtension(files.FileName);
-                    string productPath=Path.Combine(wwwRootPath, @"images\product");
-                    if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
-                    {
-                        //delete oldImage 
-                        var oldImagePath=Path.Combine(wwwRootPath,productVM.Product.ImageUrl.TrimStart('\\'));
-                        if(System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-                    using(var fileStream=new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-                    {
-                        files.CopyTo(fileStream);
-                    }
-                    productVM.Product.ImageUrl = @"\images\product\" + fileName;
-                }  
-                if(productVM.Product.Id==0)
-                {
-                    _unitOfWork.Product.Add(productVM.Product);
-                }
-                else
-                {
-                    _unitOfWork.Product.Update(productVM.Product);
-                }
-                
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index");
             }
+
             else
             {
                 productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
-                    {
-                        Text = u.Name,
-                        Value = u.Id.ToString()                                     
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
                 });
             }
             return View(productVM);
         }
-      
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product product = _unitOfWork.Product.Get(u => u.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
+
+
+        /*  public IActionResult Upserts(ProductVM productVM, IFormFile? files)
+          {                   
+              if (ModelState.IsValid)
+              {
+                  string wwwRootPath = _webHostEnvironment.WebRootPath;
+                  if(files!=null)
+                  {
+                      string fileName=Guid.NewGuid().ToString()+Path.GetExtension(files.FileName);
+                      string productPath=Path.Combine(wwwRootPath, @"images\product");
+                      if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                      {
+                          //delete oldImage 
+                          var oldImagePath=Path.Combine(wwwRootPath,productVM.Product.ImageUrl.TrimStart('\\'));
+                          if(System.IO.File.Exists(oldImagePath))
+                          {
+                              System.IO.File.Delete(oldImagePath);
+                          }
+                      }
+                      using(var fileStream=new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                      {
+                          files.CopyTo(fileStream);
+                      }
+                      productVM.Product.ImageUrl = @"\images\product\" + fileName;
+                  }  
+                  if(productVM.Product.Id==0)
+                  {
+                      _unitOfWork.Product.Add(productVM.Product);
+                  }
+                  else
+                  {
+                      _unitOfWork.Product.Update(productVM.Product);
+                  }
+
+                  _unitOfWork.Save();
+                  TempData["success"] = "Product created successfully";
+                  return RedirectToAction("Index");
+              }
+              else
+              {
+                  productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                      {
+                          Text = u.Name,
+                          Value = u.Id.ToString()                                     
+                  });
+              }
+              return View(productVM);
+          }  */
+
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int id)
