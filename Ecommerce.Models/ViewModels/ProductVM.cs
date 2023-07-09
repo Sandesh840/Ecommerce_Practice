@@ -15,6 +15,6 @@ namespace Ecommerce.Models.ViewModels
 
         
         [ValidateNever]
-        public IEnumerable<SelectListItem> categoryList { get; set; }
+        public IEnumerable<SelectListItem> CategoryList { get; set; }
     }
 }

@@ -26,16 +26,9 @@ namespace Ecommerce_test.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id) 
         {
-            //IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
-            //{
-            //    Text = u.Name,
-            //    Value = u.Id.ToString()
-            //});
-           // ViewBag.CategoryList = categoryList;
-            //ViewData["CategoryList"] = categoryList;
             ProductVM productVM = new()
             {
-                categoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
@@ -55,11 +48,7 @@ namespace Ecommerce_test.Areas.Admin.Controllers
 
         [HttpPost]
         public IActionResult Upserts(ProductVM productVM, IFormFile? files)
-        {           
-            /*if (obj.Name!=null &&  obj.Name.ToLower() == "test")
-            {
-                ModelState.AddModelError("", "Test is invalid");
-            }*/
+        {                   
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
@@ -97,7 +86,7 @@ namespace Ecommerce_test.Areas.Admin.Controllers
             }
             else
             {
-                productVM.categoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                     {
                         Text = u.Name,
                         Value = u.Id.ToString()                                     
@@ -105,34 +94,7 @@ namespace Ecommerce_test.Areas.Admin.Controllers
             }
             return View(productVM);
         }
-
-        //get detail by id
-       /* public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product product = _unitOfWork.Product.Get(u => u.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
-        [HttpPost]
-        public IActionResult Edit(Product obj)
-        {         
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Product updated successfully";
-                return RedirectToAction("Index");
-            }
-            return View();
-        }  */
-        // delete page
+      
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
