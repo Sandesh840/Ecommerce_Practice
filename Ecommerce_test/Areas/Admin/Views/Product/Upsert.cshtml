@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="card-body p-4">
-        <form method="post" asp-controller="Product" asp-action="Upserts" class="row" enctype="multipart/form-data ">
+        <form method="post" class="row" enctype="multipart/form-data" asp-action="Upserts">
             <input asp-for="Product.Id" hidden /> 
             <div class="row">
                 <div class="col-10">
@@ -62,19 +62,11 @@
                                 <option disabled selected>--Select Category--</option>
                             </select>
                             <label class="ms-2">Category Name</label>
-                            <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
-
-                            @*
-                            <div class="form-floating py-2 col-12">
-                            <input type="file" name="files" id="files" class="form-control border-0 shadow" />
-                            <label class="ms-2">Image</label>
-                            </div>
-                            *@
+                            <span asp-validation-for="Product.CategoryId" class="text-danger"></span>                           
                             
                             <div class="form-floating py-2 col-12">
-                            <input type="text" class="form-control border-0 shadow" asp-for="@Model.Product.ImageUrl" />
+                            <input type="file" name="file" class="form-control border-0 shadow"  />                            
                             <label class="ms-2">Image</label>
-                            <span asp-validation-for="Product.ImageUrl" class="text-danger"></span>
                             </div>
                             
                            
@@ -82,8 +74,7 @@
                         </div>
                         <div class="row pt-2">
                             <div class="col-6 col-md-3 ">
-                                <button type="submit" class="btn btn-primary form-control"> Create </button>
-                                @*
+                               
                                 @if (Model.Product.Id != 0)
                                 {
                                 <button type="submit" class="btn btn-primary form-control"> Update </button>
@@ -92,7 +83,7 @@
                                 {
                                 <button type="submit" class="btn btn-primary form-control"> Create </button>
                                 }
-                                *@
+                                
                                
                             </div>
                             <div class="col-6 col-md-3">
