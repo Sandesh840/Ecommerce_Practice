@@ -15,6 +15,7 @@ namespace Ecommerce.DataAccess.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
+        public DbSet<Company> Company { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //this is needed when using identity user
@@ -24,6 +25,12 @@ namespace Ecommerce.DataAccess.Data
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "History", DisplayOrder = 2 }, 
                 new Category { Id = 3, Name = "Art", DisplayOrder = 3 }
+                );
+
+            modelBuilder.Entity<Company>().HasData(
+                new Company { Id = 1, Name = "Tech Solution", StreetAddress = "Kapan", City="Kathmandu", PostalCode="44500", State="3", PhoneNumber="7853214965" },
+                new Company { Id = 2, Name = "IT Expert", StreetAddress = "Dhumbaharai", City="Khotang", PostalCode="6501", State="1", PhoneNumber="74327756375" },
+                new Company { Id = 3, Name = "Orchid", StreetAddress = "Gausala", City="Bhaktapur", PostalCode="4702", State="2", PhoneNumber="7427785745" }               
                 );
 
             modelBuilder.Entity<Product>().HasData(
