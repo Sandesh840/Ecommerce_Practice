@@ -1,8 +1,10 @@
 ﻿using Ecommerce.DataAccess.Repository.IRepository;
 using Ecommerce.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Ecommerce_test.Areas.Customer.Controllers
 {
@@ -28,8 +30,38 @@ namespace Ecommerce_test.Areas.Customer.Controllers
 
         public IActionResult Details(int productId)
         {
-            Product product = _unitOfWork.Product.Get(u=>u.Id== productId, includeProperties: "Category");
-            return View(product);
+            ShoppingCart cart = new()
+            {
+                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+            };
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            //get the user id 
+           var claimsIdentity=(ClaimsIdentity)User.Identity;
+           var userId=claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
+            ShoppingCart cartFromDb=_unitOfWork.ShopingCart.Get(u=>u.ApplicationUserId == userId && u.ProductId== shoppingCart.ProductId);
+            if (cartFromDb != null)
+            {
+                //cart already exist
+                cartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.ShopingCart.Update(cartFromDb);
+            }
+            else
+            {
+                //add cart
+                _unitOfWork.ShopingCart.Add(shoppingCart);
+            }           
+            _unitOfWork.Save();
+            TempData["success"] = "Cart updated successfully";
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()

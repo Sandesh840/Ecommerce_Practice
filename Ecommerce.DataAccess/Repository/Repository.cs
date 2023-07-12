@@ -21,9 +21,15 @@ namespace Ecommerce.DataAccess.Repository
             // _applicationDbContext.Category==dbSet
             _applicationDbContext.Product.Include(u => u.Category).Include(u => u.CategoryId);
         }
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query;
+            if (tracked){
+                query = dbSet;                
+            }
+            else{
+                 query = dbSet.AsNoTracking();               
+            }
             query = query.Where(filter);
             if (!string.IsNullOrEmpty(includeProperties))
             {
@@ -36,9 +42,12 @@ namespace Ecommerce.DataAccess.Repository
         }
 
         //Category, CategoryType
-        public IEnumerable<T> GetAll(string? includeProperties=null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties=null)
         {
             IQueryable<T> query = dbSet;
+            if(filter != null) {
+                query = query.Where(filter);
+            }          
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries)) 
