@@ -14,12 +14,16 @@ namespace Ecommerce.DataAccess.Repository
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
         public ICompanyRepository Company { get; private set; }
+        public IShopingCartRepository ShopingCart { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; private set; }
         public UnitOfWork(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
             Category = new CategoryRepository(_applicationDbContext);
             Product = new ProductRepository(_applicationDbContext);
             Company = new CompanyRepository(_applicationDbContext);
+            ShopingCart = new ShopingCartRepository(_applicationDbContext);
+            ApplicationUser = new ApplicationUserRepository(_applicationDbContext);
         }
 
 
