@@ -1,4 +1,6 @@
 ﻿@using Ecommerce.Utility
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<IdentityUser> SignInManager
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,9 +28,12 @@
                         <li class="nav-item">
                             <a class="nav-link " asp-area="Customer" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if(SignInManager.IsSignedIn(User))
+                       {
                         <li class="nav-item">
                             <a class="nav-link " asp-area="Admin" asp-area="" asp-controller="Order" asp-action="Index">Manage Order</a>
                         </li>
+                       }
                         @*@if (User.IsInRole(SD.Role_Admin))
                         {*@
                             <li class="nav-item dropdown">

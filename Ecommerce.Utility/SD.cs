@@ -15,7 +15,7 @@ namespace Ecommerce.Utility
 
         public const string StatusPending = "Pending";
         public const string StatusApproved = "Approved";
-        public const string StatusInProcess = "Process";
+        public const string StatusInProcess = "Processing";
         public const string StatusShipped = "Shipped";
         public const string StatusCancled = "Cancled";
         public const string StatusRefunded = "Refunded";
