@@ -1,7 +1,9 @@
 ﻿using Ecommerce.DataAccess.Repository.IRepository;
 using Ecommerce.Models;
+using Ecommerce.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -53,13 +55,16 @@ namespace Ecommerce_test.Areas.Customer.Controllers
                 //cart already exist
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShopingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 //add cart
                 _unitOfWork.ShopingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart, _unitOfWork.ShopingCart.GetAll(u => u.ApplicationUserId == userId).Count());
             }           
-            _unitOfWork.Save();
+            
             TempData["success"] = "Cart updated successfully";
             return RedirectToAction("Index");
         }
