@@ -164,6 +164,7 @@ namespace Ecommerce_test.Areas.Customer.Controllers
                     _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
 					_unitOfWork.Save();
 				}
+                HttpContext.Session.Clear();
 			}
             List<ShoppingCart> shoppingCarts=_unitOfWork.ShopingCart.GetAll(u=>u.ApplicationUserId==orderHeader.ApplicationUserId).ToList();
             _unitOfWork.ShopingCart.RemoveRange(shoppingCarts);
