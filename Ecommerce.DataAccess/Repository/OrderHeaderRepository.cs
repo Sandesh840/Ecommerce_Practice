@@ -22,7 +22,7 @@ namespace Ecommerce.DataAccess.Repository
 
         public void Update(OrderHeader obj)
         {
-            _applicationDbContext.Update(obj);
+            _applicationDbContext.OrderHeader.Update(obj);
         }
 
 		public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)

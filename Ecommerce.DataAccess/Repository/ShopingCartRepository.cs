@@ -22,7 +22,7 @@ namespace Ecommerce.DataAccess.Repository
 
         public void Update(ShoppingCart obj)
         {
-            _applicationDbContext.Update(obj);
+            _applicationDbContext.ShoppingCart.Update(obj);
         }
     }
 }

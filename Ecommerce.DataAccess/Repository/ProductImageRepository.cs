@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.DataAccess.Repository
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public CategoryRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        public ProductImageRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
 
 
 
-        public void Update(Category obj)
+        public void Update(ProductImage obj)
         {
-            _applicationDbContext.Category.Update(obj);
+            _applicationDbContext.ProductImage.Update(obj);
         }
     }
 }
