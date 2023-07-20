@@ -30,6 +30,11 @@ builder.Services.ConfigureApplicationCookie(options => {
     option.AppId = "1243308809716189";
     option.AppSecret = "394effccfbe627d9138445e90c4ead6c";
 });
+builder.Services.AddAuthentication().AddMicrosoftAccount(option =>
+{
+    option.ClientId = "fbf8e44c-2029-4c4e-a4c1-0fe062c8598a";
+    option.ClientSecret = "b1ff563f-f5d0-4d30-baf7-af493775f30c";
+});
 
 
 builder.Services.AddDistributedMemoryCache();

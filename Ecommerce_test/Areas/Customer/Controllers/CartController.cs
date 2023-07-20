@@ -30,8 +30,10 @@ namespace Ecommerce_test.Areas.Customer.Controllers
                 includeProperties:"Product"),
                 OrderHeader = new()
             };
+            IEnumerable<ProductImage> productImages=_unitOfWork.ProductImage.GetAll();
             foreach(var cart in ShopingCartVM.ShoppingCartList)
             {
+                cart.Product.ProductImage=productImages.Where(u=>u.ProductId==cart.ProductId).ToList();
                 cart.Price =GetPriceBasedOnQuantity(cart);
                 ShopingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }

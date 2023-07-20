@@ -17,5 +17,10 @@ namespace Ecommerce.DataAccess.Repository
         {
             _applicationDbContext = applicationDbContext;
         }
+
+        public void Update(ApplicationUser applicationUser)
+        {
+            _applicationDbContext.ApplicationUser.Update(applicationUser);
+        }
     }
 }
