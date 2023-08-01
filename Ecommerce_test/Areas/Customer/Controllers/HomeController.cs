@@ -24,9 +24,14 @@ namespace Ecommerce_test.Areas.Customer.Controllers
            
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string search="")
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage");
+            //IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
+            //    .Where(search==""||productList.Title.ToLower().StartsWith(search));
+
+            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
+                .Where(product => search == "" || product.Title.ToLower().StartsWith(search.ToLower()));
+
             return View(productList);
         }
 

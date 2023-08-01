@@ -1,5 +1,14 @@
 ﻿@model IEnumerable<Product>
-
+<form asp-action="Index">
+    <div class="row">
+        <div class="col-md-8">
+            <input name="search" class="form-control" placeholder="Search by name" />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-info">Search</button>
+        </div>
+    </div>
+</form>
     <div class="row pb-3">
     @foreach(var product in Model)
     {
