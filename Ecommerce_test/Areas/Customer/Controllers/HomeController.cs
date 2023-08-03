@@ -1,5 +1,6 @@
 ﻿using Ecommerce.DataAccess.Repository.IRepository;
 using Ecommerce.Models;
+using Ecommerce.Models.ViewModels;
 using Ecommerce.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -24,16 +25,20 @@ namespace Ecommerce_test.Areas.Customer.Controllers
            
         }
 
-        public IActionResult Index(string search="")
+        public IActionResult Index(string search = "", string orderBy = "")
         {
-            //IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
-            //    .Where(search==""||productList.Title.ToLower().StartsWith(search));
-
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
                 .Where(product => search == "" || product.Title.ToLower().StartsWith(search.ToLower()));
+            IEnumerable<ProductVM> lst = productList.Select(x => new ProductVM
+            {
+                Product= x,
+                CategoryList =null
 
-            return View(productList);
+            });
+
+            return View(lst);
         }
+
 
         public IActionResult Details(int productId)
         {
