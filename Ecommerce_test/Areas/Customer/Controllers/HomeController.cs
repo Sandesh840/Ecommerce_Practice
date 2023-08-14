@@ -25,16 +25,20 @@ namespace Ecommerce_test.Areas.Customer.Controllers
            
         }
 
-        public IActionResult Index(string search = "", string orderBy = "")
+        public IActionResult Index(string search = "", string orderBy = "", string TitleSortOrder="")
         {
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
                 .Where(product => search == "" || product.Title.ToLower().StartsWith(search.ToLower()));
-            IEnumerable<ProductVM> lst = productList.Select(x => new ProductVM
+            List<ProductVM> lst = productList.Select(x => new ProductVM
             {
                 Product= x,
                 CategoryList =null
 
-            });
+            }).ToList();
+            //foreach (var item in lst)
+            //{
+            //    item.TitleSortOrder = TitleSortOrder;
+            //}
 
             return View(lst);
         }
