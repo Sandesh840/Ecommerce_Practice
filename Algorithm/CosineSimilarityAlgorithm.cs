@@ -34,7 +34,7 @@ namespace Algorithm
             };*/
         }
 
-        public List<int> GetSimilarProducts(int productId)
+        public List<int> GetSimilarProducts(int productId, double similarityThreshold = 0.2)
         {
             // Create an IDataView from the product data
             var dataView = _mlContext.Data.LoadFromEnumerable(_products.Select(p => new ProductData { Description = p.Description }));
@@ -60,8 +60,6 @@ namespace Algorithm
             //recommend product
             if (_productToRecommendFor != null)
             {
-                var similarityThreshold = 0.1; // You can adjust this threshold as needed
-
                 var recommendedProducts = _products
                     .Where(p => p.Id != _productToRecommendFor.Id)
                     .Select(p => new

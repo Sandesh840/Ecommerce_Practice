@@ -44,19 +44,18 @@ namespace Ecommerce_test.Areas.Customer.Controllers
             return View(lst);
         }
 
-
         public IActionResult Details(int productId)
         {
-            Product product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductImage");
             ShoppingCart cart = new()
             {
-                Product = product,
+                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductImage"),
                 Count = 1,
                 ProductId = productId
             };
             List<Product> products = (List<Product>)_unitOfWork.Product.GetAll();
             CosineSimilarityAlgorithm algo = new CosineSimilarityAlgorithm(products);
             List<int> productIds = algo.GetSimilarProducts(productId);
+            List<Product> recommendProducts = products.Where(p=>productIds.Contains(p.Id)).Cast<Product>().ToList();
             return View(cart);
         }
 

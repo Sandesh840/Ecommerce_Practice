@@ -1,4 +1,12 @@
 ﻿@model IEnumerable<ProductVM>
+
+@if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+{
+
+}
+else
+{
+   
 <form asp-action="Index">
     <div class="row">
         <div class="col-md-8">
@@ -42,3 +50,4 @@
         </div>
     }
 </div>
+}
