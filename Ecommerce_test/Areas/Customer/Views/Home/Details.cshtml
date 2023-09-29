@@ -1,13 +1,13 @@
-﻿@model ShoppingCart
+﻿@model DetailVM
 
 <form method="post">
-    <input hidden  asp-for="ProductId" />
+    <input hidden  asp-for="@Model.ShoppingCart.ProductId" />
     <div class="card shadow border-0 mt-4 mb-4">
         <div class="card-header bg-secondary bg-gradient text-light py-4">
             <div class="row">
                 <div class="col-12 text-center">
-                    <h3 class="text-white text-uppercase">@Model.Product.Title</h3>
-                    <p class="text-white-50 fw-semibold mb-0">by @Model.Product.Author</p>
+                    <h3 class="text-white text-uppercase">@Model.ShoppingCart.Product.Title</h3>
+                    <p class="text-white-50 fw-semibold mb-0">by @Model.ShoppingCart.Product.Author</p>
                 </div>
             </div>
         </div>
@@ -26,11 +26,11 @@
 
 
                         @*-----------------------------*@
-                        @if (Model.Product.ProductImage != null && Model.Product.ProductImage.Count() > 0)
+                        @if (Model.ShoppingCart.Product.ProductImage != null && Model.ShoppingCart.Product.ProductImage.Count() > 0)
                         {
                             <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
                                 <div class="carousel-indicators">
-                                    @foreach(var imgWithIndex in Model.Product.ProductImage
+                                    @foreach (var imgWithIndex in Model.ShoppingCart.Product.ProductImage
                                     .Select((image, index)=>new{Image=image, Index = index }))
                                     {
                                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@imgWithIndex.Index" 
@@ -38,7 +38,7 @@
                                     }
                                      </div>
                                 <div class="carousel-inner">
-                                    @foreach (var imgWithIndex in Model.Product.ProductImage
+                                    @foreach (var imgWithIndex in Model.ShoppingCart.Product.ProductImage
                                    .Select((image, index) => new { Image = image, Index = index }))
                                     {
                                         <div class="@(imgWithIndex.Index==0?"carousel-item active":"carousel-item")">
@@ -67,16 +67,16 @@
                     <div class="col-12 col-lg-6 offset-lg-1">
 
                         <div class="col-12 col-md-6 pb-4">
-                            <span class="badge">@Model.Product.Category.Name</span>
+                            <span class="badge">@Model.ShoppingCart.Product.Category.Name</span>
                         </div>
                         <div class="row ps-2">
-                            <h6 class="text-dark text-opacity-50 ">ISBN : @Model.Product.ISBN</h6>
+                            <h6 class="text-dark text-opacity-50 ">ISBN : @Model.ShoppingCart.Product.ISBN</h6>
                         </div>
                         <div class="row ps-2">
                             <h6 class="text-dark text-opacity-50  pb-2">
                                 List Price:
                                 <span class="text-decoration-line-through">
-                                    @Model.Product.ListPrice.ToString("c")
+                                    @Model.ShoppingCart.Product.ListPrice.ToString("c")
                                 </span>
                             </h6>
                         </div>
@@ -99,17 +99,17 @@
                                 <div>Price</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div> @Model.Product.Price.ToString("c")</div>
+                                <div> @Model.ShoppingCart.Product.Price.ToString("c")</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>  @Model.Product.Price50.ToString("c")</div>
+                                <div>  @Model.ShoppingCart.Product.Price50.ToString("c")</div>
                             </div>
                             <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div> @Model.Product.Price100.ToString("c")</div>
+                                <div> @Model.ShoppingCart.Product.Price100.ToString("c")</div>
                             </div>
                         </div>
                         <div class="row pl-2 my-3">
-                            <p class="text-secondary lh-sm">@Html.Raw(@Model.Product.Description)</p>
+                            <p class="text-secondary lh-sm">@Html.Raw(@Model.ShoppingCart.Product.Description)</p>
                         </div>
                         <div class="row pl-2 mb-3">
                             <div class="col-md-4">
@@ -118,7 +118,7 @@
                                           id="inputGroup-sizing-default">
                                         Count
                                     </span>
-                                    <input type="number" asp-for="Count" value="1" class="form-control text-end"
+                                    <input type="number" asp-for="@Model.ShoppingCart.Count" value="1" class="form-control text-end"
                                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
 
                                 </div>
@@ -137,5 +137,42 @@
                 </div>
             </div>
         </div>
+        <did class="card-body">
+            <div class="row pb-3">
+                @foreach (var ProductVM in Model.RecommendedProducts)
+                {
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="row p-2">
+                            <div class="col-12 p-1">
+                                <div class="card border-0 p-3 shadow border-top border-5 rounded">
+                                    @if (ProductVM.ProductImage != null && ProductVM.ProductImage.Count() > 0)
+                                    {
+                                        <img src="@ProductVM.ProductImage?.FirstOrDefault()?.ImageUrl" class="card-img-top rounded" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/noImg.png" class="card-img-top rounded" />
+                                    }
+
+                                    <div class=" pl-1">
+                                        <p class="card-title h5 text-dark opacity-75 text-uppercase text-center"> @ProductVM.Title</p>
+                                        <p class="card-title text-warning text-center">by <b>@ProductVM.Author</b> </p>
+                                    </div>
+                                    <div class=" pl-1">
+                                        <p class="text-dark text-opacity-75  text-center mb-0">List Price:  <span class="text-decoration-line-through"> @ProductVM.ListPrice.ToString("c")</span></p>
+                                    </div>
+                                    <div class=" pl-1">
+                                        <p class="text-dark text-opacity-75  text-center">As low as :<span> @ProductVM.Price100.ToString("c")</span></p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a asp-action="Details" asp-route-productId="@ProductVM.Id" class="btn btn-primary bg-gradient border-0 form-control">Details </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </did>
     </div>
 </form>

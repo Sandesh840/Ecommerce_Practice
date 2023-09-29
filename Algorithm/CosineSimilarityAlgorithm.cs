@@ -34,7 +34,7 @@ namespace Algorithm
             };*/
         }
 
-        public List<int> GetSimilarProducts(int productId, double similarityThreshold = 0.2)
+        public List<int> GetSimilarProducts(int productId, double similarityThreshold = 0.1)
         {
             // Create an IDataView from the product data
             var dataView = _mlContext.Data.LoadFromEnumerable(_products.Select(p => new ProductData { Description = p.Description }));

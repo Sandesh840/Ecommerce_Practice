@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -52,11 +53,11 @@ namespace Ecommerce_test.Areas.Customer.Controllers
                 Count = 1,
                 ProductId = productId
             };
-            List<Product> products = (List<Product>)_unitOfWork.Product.GetAll();
+            List<Product> products = (List<Product>)_unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage");
             CosineSimilarityAlgorithm algo = new CosineSimilarityAlgorithm(products);
             List<int> productIds = algo.GetSimilarProducts(productId);
             List<Product> recommendProducts = products.Where(p=>productIds.Contains(p.Id)).Cast<Product>().ToList();
-            return View(cart);
+            return View(new DetailVM() { ShoppingCart = cart, RecommendedProducts = recommendProducts });
         }
 
         [HttpPost]
