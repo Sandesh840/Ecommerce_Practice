@@ -1,4 +1,5 @@
-﻿using Ecommerce.DataAccess.Repository.IRepository;
+﻿using Algorithm;
+using Ecommerce.DataAccess.Repository.IRepository;
 using Ecommerce.Models;
 using Ecommerce.Models.ViewModels;
 using Ecommerce.Utility;
@@ -46,12 +47,16 @@ namespace Ecommerce_test.Areas.Customer.Controllers
 
         public IActionResult Details(int productId)
         {
+            Product product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductImage");
             ShoppingCart cart = new()
             {
-                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductImage"),
+                Product = product,
                 Count = 1,
                 ProductId = productId
             };
+            List<Product> products = (List<Product>)_unitOfWork.Product.GetAll();
+            CosineSimilarityAlgorithm algo = new CosineSimilarityAlgorithm(products);
+            List<int> productIds = algo.GetSimilarProducts(productId);
             return View(cart);
         }
 
