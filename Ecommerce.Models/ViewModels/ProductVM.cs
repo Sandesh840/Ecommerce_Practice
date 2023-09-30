@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 namespace Ecommerce.Models.ViewModels
 {
     public class ProductVM
-    {
+    {     
         public Product Product { get; set; }       
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
-        public int Limit { get; set; }
-        public int Offset { get; set; }
-
+        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+       
     }
 }

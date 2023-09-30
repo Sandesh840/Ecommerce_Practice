@@ -4,11 +4,11 @@ using Ecommerce.Models;
 using Ecommerce.Models.ViewModels;
 using Ecommerce.Utility;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
+using PagedList;
+using PagedList.Mvc;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Ecommerce_test.Areas.Customer.Controllers
@@ -23,27 +23,30 @@ namespace Ecommerce_test.Areas.Customer.Controllers
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
-            _unitOfWork = unitOfWork;
-           
+            _unitOfWork = unitOfWork;           
         }
 
-        public IActionResult Index(string search = "", string orderBy = "", string TitleSortOrder="")
+        public IActionResult Index(int page = 1, int pageSize = 12, string search = "")
         {
+            // Retrieve products based on the search query
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductImage")
                 .Where(product => search == "" || product.Title.ToLower().StartsWith(search.ToLower()));
-            List<ProductVM> lst = productList.Select(x => new ProductVM
+
+            int totalItems = productList.Count();
+            List<Product> itemsOnPage = productList.Skip((page - 1) * pageSize)
+                                      .Take(pageSize)
+                                      .ToList();
+            var viewModel = new PaginatedViewModel<Product>
             {
-                Product= x,
-                CategoryList =null
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                Items = itemsOnPage
+            };
 
-            }).ToList();
-            //foreach (var item in lst)
-            //{
-            //    item.TitleSortOrder = TitleSortOrder;
-            //}
-
-            return View(lst);
+            return View(viewModel);
         }
+
 
         public IActionResult Details(int productId)
         {

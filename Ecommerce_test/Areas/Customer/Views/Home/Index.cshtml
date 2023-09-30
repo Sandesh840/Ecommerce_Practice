@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductVM>
+﻿@model PaginatedViewModel<Product>
 
 @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
 {
@@ -18,36 +18,50 @@ else
     </div>
 </form>
     <div class="row pb-3">
-    @foreach (var ProductVM in Model)
+    @foreach (var ProductVM in Model.Items)
     {
         <div class="col-lg-3 col-sm-6">
             <div class="row p-2">
                 <div class="col-12 p-1">
                     <div class="card border-0 p-3 shadow border-top border-5 rounded">
-                        @if (ProductVM.Product.ProductImage != null && ProductVM.Product.ProductImage.Count() > 0)
+                        @if (ProductVM.ProductImage != null && ProductVM.ProductImage.Count() > 0)
                         {
-                            <img src="@ProductVM.Product.ProductImage.FirstOrDefault().ImageUrl" class="card-img-top rounded" />
+                            <img src="@ProductVM.ProductImage.FirstOrDefault().ImageUrl" class="card-img-top rounded" />
                         }else{
                             <img src="~/images/noImg.png" class="card-img-top rounded" />
                         }
                         
                         <div class=" pl-1">
-                            <p class="card-title h5 text-dark opacity-75 text-uppercase text-center"> @ProductVM.Product.Title</p>
-                            <p class="card-title text-warning text-center">by <b>@ProductVM.Product.Author</b> </p>
+                            <p class="card-title h5 text-dark opacity-75 text-uppercase text-center"> @ProductVM.Title</p>
+                            <p class="card-title text-warning text-center">by <b>@ProductVM.Author</b> </p>
                         </div>
                         <div class=" pl-1">
-                            <p class="text-dark text-opacity-75  text-center mb-0">List Price:  <span class="text-decoration-line-through"> @ProductVM.Product.ListPrice.ToString("c")</span></p>
+                            <p class="text-dark text-opacity-75  text-center mb-0">List Price:  <span class="text-decoration-line-through"> @ProductVM.ListPrice.ToString("c")</span></p>
                         </div>
                         <div class=" pl-1">
-                            <p class="text-dark text-opacity-75  text-center">As low as :<span> @ProductVM.Product.Price100.ToString("c")</span></p>
+                            <p class="text-dark text-opacity-75  text-center">As low as :<span> @ProductVM.Price100.ToString("c")</span></p>
                         </div>  
                     </div>
                     <div>
-                        <a asp-action="Details" asp-route-productId="@ProductVM.Product.Id" class="btn btn-primary bg-gradient border-0 form-control">Details </a>
+                        <a asp-action="Details" asp-route-productId="@ProductVM.Id" class="btn btn-primary bg-gradient border-0 form-control">Details </a>
                     </div>
                 </div>
             </div>
         </div>
     }
 </div>
+<div class="pagination text-center py-lg-4">
+    
+        <nav aria-label="...">
+            <ul class="pagination pagination-lg">
+                @for (int i = 1; i <= Math.Ceiling((double)Model.TotalItems / Model.PageSize); i++)
+                {
+                <li class="page-item">
+                        @Html.ActionLink(i.ToString(), "Index", new { page = i, pageSize = Model.PageSize }, new {@class="page-link"})
+                </li>
+                }
+            </ul>
+        </nav>
+</div>
+
 }
