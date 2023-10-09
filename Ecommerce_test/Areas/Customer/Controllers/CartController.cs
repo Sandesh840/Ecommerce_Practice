@@ -132,7 +132,7 @@ namespace Ecommerce_test.Areas.Customer.Controllers
                         PriceData=new SessionLineItemPriceDataOptions
                         {
                             UnitAmount=(long)(item.Price*100),   //20.50=>2050
-                            Currency="usd",
+                            Currency="inr",
                             ProductData=new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name=item.Product.Title
